@@ -1,0 +1,47 @@
+name = phamxuanthuy theme
+description =  phamxuanthuy theme
+core = 7.x
+engine = phptemplate
+
+stylesheets[all][] = css/bootstrap/css/bootstrap.css
+stylesheets[all][] = css/styles.css
+
+scripts[] = css/bootstrap/js/bootstrap.min.js
+scripts[] = js/scripts.js
+
+regions[header_top_left]         = Header top left
+regions[header_top_right]         = Header top right
+regions[header]         = Header
+regions[banner]        = Banner
+regions[content]        = Content
+regions[content_bottom]        = Content bottom
+regions[sidebar_left]   = Left Sidebar
+regions[sidebar_right]  = Right Sidebar
+regions[help]           = Help
+regions[footer_1]   = footer top
+regions[footer_2]  = footer midden 1
+regions[footer_3]   = footer midden 2
+regions[footer_4]   = Footer bottom
+features[] = logo
+features[] = name
+features[] = slogan
+features[] = node_user_picture
+features[] = comment_user_picture
+features[] = comment_user_verification
+features[] = favicon
+features[] = main_menu
+features[] = secondary_menu
+settings[sidebar_layout]  = "right_sidebar"
+settings[sidebar_width]  = "narrow_sidebar"
+settings[image_logo]  = 1
+settings[slideshow_display]  = 1
+settings[breadcrumbs]  = 1
+settings[socialicon_display] sss = 1                                                     
+settings[slide1_url]  = "node/1"
+settings[slide2_url]  = "node/2"
+settings[slide3_url]  = "node/3"                                  
+version = "7.x-1.0"
+core = "7.x"
+project = "phamxuanthuy_theme"
+datestamp = "1368821114"
+

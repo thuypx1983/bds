@@ -1,0 +1,519 @@
+<?php
+
+function product_cart_init() {
+    drupal_add_js(drupal_get_path('module', 'product_cart') .'/js/product_cart.js');
+}
+/**
+ * Implements hook_menu().
+ */
+function product_cart_menu()
+{
+
+    // Ajax Callback. Add product to cart list.
+    $items['ajax/product/cart/add'] = array(
+        'title' => 'Get Current User Name',
+        'page callback' => '_product_cart_add',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['ajax/product/cart/push'] = array(
+        'title' => 'Get Current User Name',
+        'page callback' => '_product_cart_push',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+
+    // Ajax Callback. remmove product to cart list.
+    $items['ajax/product/cart/remove'] = array(
+        'title' => 'Get Current User Name',
+        'page callback' => '_product_cart_remove',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+    // Ajax Callback. clear all.
+    $items['ajax/product/cart/remove_all'] = array(
+        'title' => 'Get Current User Name',
+        'page callback' => '_product_cart_remove_all',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+
+
+    $items['product/cart'] = array(
+        'type' => MENU_NORMAL_ITEM,
+        'title' => t('product cart'),
+        'description' => 'product cart page',
+        'page callback' => '_product_cart_page',
+        'access callback' => 'user_access',
+        'access arguments' => array('access content'),
+    );
+
+    /////////////////////////////
+    $items['ajax/product/cart/getfeture'] = array(
+        'title' => 'Get engine',
+        'page callback' => '_product_cart_get_feature',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+$items['ajax/product/cart/add_option'] = array(
+        'title' => 'Add more option',
+        'page callback' => '_product_cart_add_option',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+
+    return $items;
+}
+
+function _product_cart_add()
+{
+    $current_lang= $GLOBALS['language']->language;
+
+    $nid = (int)$_POST['nid'];
+    drupal_session_start();
+    if (!isset($_SESSION['product_cart'])) $_SESSION['product_cart'] = array();
+    $node=node_load($nid);
+    $nodes=translation_node_get_translations($node->tnid);
+
+    $ids=$nodes['fr']->nid.'-'.$nodes['en']->nid;
+    $_SESSION['product_cart'][$ids]=array('fr'=>$nodes['fr']->nid,'en'=>$nodes['en']->nid);
+
+    $block = block_load('product_cart', 'product_cart_block');
+    $json=array();
+    $json['block_cart']=@drupal_render(_block_get_renderable_array(_block_render_blocks(array($block))));
+
+
+    ##popup
+    $item_list=$_SESSION['product_cart'];
+    if(count($item_list)>0){
+        $nids=array();
+        foreach($item_list as $item){
+            array_push($nids,$item[$current_lang]);
+        }
+        $item_list=node_load_multiple($nids);
+
+        $items=array();
+        foreach($item_list as $item){
+            $items[$item->field_category['und'][0]['tid']][]=$item;
+        }
+    }
+    $json['popup_cart']= theme('product_cart_popup', array(
+            'title' => '',
+            'content' => '',
+            'item_list' => $items,
+
+        )
+    );
+
+    echo drupal_json_encode($json);
+    drupal_exit();
+
+
+}
+function _product_cart_push()
+{
+    $current_lang= $GLOBALS['language']->language;
+
+    $nid = (int)$_GET['nid'];
+    drupal_session_start();
+    if (!isset($_SESSION['product_cart'])) $_SESSION['product_cart'] = array();
+    $node=node_load($nid);
+    $nodes=translation_node_get_translations($node->tnid);
+
+    $ids=$nodes['fr']->nid.'-'.$nodes['en']->nid;
+    $_SESSION['product_cart'][$ids]=array('fr'=>$nodes['fr']->nid,'en'=>$nodes['en']->nid);
+
+    drupal_goto(url('content/devis'));
+
+}
+
+function _product_cart_remove()
+{
+    $current_lang= $GLOBALS['language']->language;
+
+   if($_POST['type']=='product'){
+       $nid = (int)$_POST['nid'];
+       drupal_session_start();
+       if (!isset($_SESSION['product_cart'])) $_SESSION['product_cart'] = array();
+       $node=node_load($nid);
+       $nodes=translation_node_get_translations($node->tnid);
+
+       $ids=$nodes['fr']->nid.'-'.$nodes['en']->nid;
+       unset($_SESSION['product_cart'][$ids]);
+   }elseif($_POST['type']=='option'){
+       unset($_SESSION['product_cart_option'][$_POST['nid']]);
+   }
+
+    $block = block_load('product_cart', 'product_cart_block');
+    print @drupal_render(_block_get_renderable_array(_block_render_blocks(array($block))));
+
+}
+
+function _product_cart_remove_all()
+{
+    unset($_SESSION['product_cart']);
+
+    $block = block_load('product_cart', 'product_cart_block');
+    print @drupal_render(_block_get_renderable_array(_block_render_blocks(array($block))));
+
+}
+
+function _product_cart_get_feature(){
+    $type=@$_POST['type'];
+    $json=array(
+        'option'=>"",
+        'items'=>"",
+    );
+    switch($type){
+        case 'engine':
+            $engines=getEngine((int)$_POST['catid']);
+
+            $json['option'].='<option value="">'.t('Energy').'</option>';
+            foreach($engines as $engine){
+                $json['option'].= '<option class="option-value" value="'.$engine->taxonomy_term_data_field_data_field_engine_tid.'">'.$engine->taxonomy_term_data_field_data_field_engine_name.'</option>';
+            }
+            break;
+        case 'height':
+            $heights=getHeight((int)$_POST['catid'],(int)$_POST['energyid']);
+            $json['option'].= '<option value="">'.t('Height').'</option>';
+            foreach($heights as $height){
+                $json['option'].= '<option class="option-value" value="'.$height->field_working_height_value.'">'.$height->field_working_height_value.'</option>';
+            }
+            break;
+        case 'width':
+            $widths=getWidth((int)$_POST['catid'],(int)$_POST['energyid'],(int)$_POST['height']);
+            $json['option'].= '<option value="">'.t('Width').'</option>';
+            foreach($widths as $width){
+                $json['option'].= '<option class="option-value" value="'.$width->field_total_width_value.'">'.$width->field_total_width_value.'</option>';
+            }
+            break;
+        case 'maximum_charge':
+            $widths=getMaximumCharge((int)$_POST['catid'],(int)$_POST['energyid'],(int)$_POST['height'],(int)$_POST['width']);
+
+            $json['option'].= '<option value="">'.t('Maximum charge').'</option>';
+            foreach($widths as $width){
+                $json['option'].= '<option class="option-value" value="'.$width->field_maximal_change_on_p_b_value.'">'.$width->field_maximal_change_on_p_b_value.'</option>';
+            }
+            break;
+        case 'maximum_range':
+            $widths=getMaximumRange((int)$_POST['catid'],(int)$_POST['energyid'],(int)$_POST['height'],(int)$_POST['width'],floatval($_POST['maximum_charge']));
+
+            $json['option'].= '<option value="">'.t('Maximum Range').'</option>';
+            foreach($widths as $width){
+                $json['option'].= '<option class="option-value" value="'.$width->field_maximum_range_value.'">'.$width->field_maximum_range_value.'</option>';
+            }
+            break;
+        default:
+            break;
+    }
+    drupal_json_output($json);
+    drupal_exit();
+
+}
+
+function _product_cart_add_option(){
+    if($GLOBALS['language']->language==en){
+        $langcode='fr';
+    }else{
+        $langcode='en';
+    }
+
+    $category=array();
+    $term_cate = taxonomy_term_load($_POST['#category_product']);
+    $translated_term_cate = i18n_taxonomy_term_get_translation($term_cate, $langcode);
+    $category[$GLOBALS['language']->language]=$term_cate;
+    $category[$langcode]=$translated_term_cate;
+
+
+    $energy=array();
+    $term_energy = taxonomy_term_load($_POST['#energy']);
+    $translated_term_energy = i18n_taxonomy_term_get_translation($term_energy, $langcode);
+    $energy[$GLOBALS['language']->language]=$term_energy;
+    $energy[$langcode]=$translated_term_energy;
+
+    if(!$translated_term_cate OR !$translated_term_energy) return;
+
+    $item=array(
+        'category_product'=>$category,
+        'energy'=>$energy,
+        'height'=>$_POST['#height'],
+        'width'=>$_POST['#width'],
+        'maximum_charge'=>$_POST['#maximum_charge'],
+        'maximum_range'=>$_POST['#maximum_range'],
+    );
+    if(!isset($_SESSION['product_cart_option'])){
+        $_SESSION['product_cart_option']=array();
+    }
+    $item['id']=md5(drupal_random_bytes(32));
+    $_SESSION['product_cart_option'][$item['id']]=$item;
+
+    print theme('product_form_items', array(
+        'products' => $_SESSION['product_cart'],
+        'options' => $_SESSION['product_cart_option'],
+        'language' => $GLOBALS['language']->language,
+    ));
+}
+
+/**
+ * Implements hook_eme().
+ */
+function product_cart_theme() {
+    return array(
+        'product_cart_output' => array(
+            'variables' => array(
+                'title' => NULL,
+                'content' => NULL,
+                'item_list' => NULL,
+                'option_list' => NULL,
+                'language' => NULL,
+            ),
+            'template' => 'templates/product-cart--block',
+        ),
+        'product_cart_popup' => array(
+            'variables' => array(
+                'title' => NULL,
+                'content' => NULL,
+                'item_list' => NULL,
+                'option_list' => NULL,
+                'language' => NULL,
+            ),
+            'template' => 'templates/product-cart-popup',
+        ),
+        'product_cart_page' => array(
+            'variables' => array(
+                'title' => NULL,
+                'content' => NULL,
+                'item_list' => NULL,
+            ),
+            'template' => 'templates/product-cart',
+        ),
+        'product_form_items' => array(
+            'variables' => array(
+                'title' => NULL,
+                'content' => NULL,
+                'products' => NULL,
+                'products' => NULL,
+                'language' => NULL,
+            ),
+            'template' => 'templates/product-form-items',
+        ),
+        'product_form_items_quantity' => array(
+            'variables' => array(
+                'title' => NULL,
+                'content' => NULL,
+                'products' => NULL,
+                'products' => NULL,
+                'language' => NULL,
+            ),
+            'template' => 'templates/product-form-items-quantity',
+        ),
+        'product_form_all_items_quantity' => array(
+            'variables' => array(
+                'title' => NULL,
+            ),
+            'template' => 'templates/product-form-all-items-quantity',
+        ),
+        'product_filter' => array(
+            'variables' => array(
+                'title' => NULL,
+                'content' => NULL,
+                'products' => NULL,
+            ),
+            'template' => 'templates/product-filter',
+        ),
+        'product_form_header_step' => array(
+            'variables' => array(
+            ),
+            'template' => 'templates/product-form-header-step',
+        ),
+        'product_search_items' => array(
+            'variables' => array(
+                'products'=>NULL
+            ),
+            'template' => 'templates/product-search-items',
+        ),
+    );
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function product_cart_block_info() {
+    $blocks = array();
+
+    $blocks['product_cart_block'] = array(
+        'info' => t('Product cart block'),
+    );
+
+    return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function product_cart_block_view($delta = '') {
+    $block = array();
+
+    switch ($delta) {
+        case 'product_cart_block':
+            $block['subject'] = '';
+            $block['content'] = _product_cart_block_content();
+            break;
+    }
+
+    return $block;
+}
+
+function _product_cart_block_content() {
+    $current_lang= $GLOBALS['language']->language;
+    drupal_session_start();
+    $static_title = t('Hello world');
+    $static_content = 'static content';
+    $item_list=$_SESSION['product_cart'];
+    $item_list=$_SESSION['product_cart'];
+    if(count($item_list)>0){
+        $nids=array();
+        foreach($item_list as $item){
+            array_push($nids,$item[$current_lang]);
+        }
+        $item_list=node_load_multiple($nids);
+
+        $items=array();
+        foreach($item_list as $item){
+           $items[$item->field_category['und'][0]['tid']][]=$item;
+        }
+    }
+    return theme('product_cart_output', array(
+            'title' => $static_title,
+            'content' => $static_content,
+            'item_list' => $items,
+
+        )
+    );
+}
+
+function _product_cart_page(){
+    $current_lang= $GLOBALS['language']->language;
+    drupal_session_start();
+    $static_title = t('Hello world');
+    $static_content = 'static content';
+    $item_list=$_SESSION['product_cart'];
+    if(count($item_list)>0){
+        $nids=array();
+        foreach($item_list as $item){
+            array_push($nids,$item[$current_lang]);
+        }
+        $item_list=node_load_multiple($nids);
+    }
+
+    return theme('product_cart_page', array(
+            'title' => $static_title,
+            'content' => $static_content,
+            'item_list' => $item_list
+        )
+    );
+}
+
+function product_cart_form_alter( &$form, &$form_state,$form_id ){
+
+    // you'll want to limit your altering to specific forms
+    if ($form_id == 'webform_client_form_30') {
+        #if(!isset($_SESSION['product_cart'])) return;
+        $current_lang= $GLOBALS['language']->language;
+        $products=array();
+        $item_list=$_SESSION['product_cart'];
+
+        if(count($item_list)>0){
+
+            $nids=array();
+            foreach($item_list as $item){
+
+                array_push($nids,$item[$current_lang]);
+            }
+            $products=node_load_multiple($nids);
+        }
+        $form['submitted']['step_content']['step_1']['items'] = array(
+            '#type' => 'item',
+            '#markup' => theme('product_form_items', array(
+                    'products' => $products,
+                    'options' => $_SESSION['product_cart_option'],
+                    'language' => $GLOBALS['language']->language,
+                )
+            ),
+            '#weight' => -100,
+        );
+        $form['submitted']['step_content']['step_2']['step_2_bottom']['step_2_bottom_content']['dates']=array(
+            '#prefix'=>'<div class="abc">',
+            '#suffix'=>'</div>',
+        );
+        $form['submitted']['step_content']['step_2']['step_2_bottom']['step_2_bottom_content']['dates']['each_item']=array(
+            '#prefix'=>'<div>',
+            '#suffix'=>'</div>',
+        );
+        foreach($products as $product){
+            $term = taxonomy_term_load($product->field_category['und'][0]['tid']);
+            $form['submitted']['step_content']['step_2']['step_2_bottom']['step_2_bottom_content']['dates']['each_item']['row-product'.$product->nid]=array(
+                '#prefix'=>'<div>',
+                '#suffix'=>'</div>',
+            );
+            $form['submitted']['step_content']['step_2']['step_2_bottom']['step_2_bottom_content']['dates']['each_item']['row-product'.$product->nid]['product-name']=
+                array(
+                    '#prefix'=>'<div><div class="row">'.$term->name.'</div><div>'.$product->title.'</div>',
+                    '#suffix'=>'</div>',
+                    '#value' => t('Membre '.$product->nid),
+                    '#attributes' => array('class' => 'label1'));
+        }
+
+        $form['submitted']['step_content']['step_2']['step_2_bottom']['step_2_bottom_content']['items'] = array(
+            '#type' => 'item',
+            '#markup' => theme('product_form_items_quantity', array(
+                    'products' => $products,
+                    'options' => $_SESSION['product_cart_option'],
+                    'language' => $GLOBALS['language']->language,
+                )
+            ),
+            '#weight' => -400,
+        );
+
+        $form['submitted']['step_content']['step_2']['step_2_bottom']['step_2_bottom_content']['dates']['all_items']['date'] =  array(
+            '#type' => 'date',
+            '#title' => '',
+            '#description' =>'',
+            '#weight' => 1,
+            '#theme'=>'webform_date',
+            '#timezone'=>'user',
+            '#process'=>array('webform_expand_date'),
+            '#element_validate'=>array('webform_validate_date'),
+            '#datepicker'=>true,
+            '#default_value'=>date('Y-m-d'),
+            '#start_date'=>'-2 years',
+            '#end_date'=>'+2 years',
+        );
+
+        $form['submitted']['step_content']['step_2']['step_2_bottom']['step_2_bottom_content']['dates']['all_items']['number_date'] =
+            array(
+                '#type' => 'textfield',
+                '#attributes' => array(
+                    'placeholder' => t('My placeholder text'),
+                )
+            );
+
+        $form['submitted']['step_content']['step_1']['step_1_filter']['product_filter'] = array(
+            '#type' => 'item',
+            '#markup' => theme('product_filter', array(
+                    'products' => $products)
+            ),
+            '#weight' => -100,
+        );
+        $form['submitted']['step_header']['step_1'] = array(
+            '#type' => 'item',
+            '#markup' => theme('product_form_header_step', array()
+            ),
+            '#weight' => -100,
+        );
+    }
+}
+
+
+

@@ -1,0 +1,54 @@
+<?php
+/**
+ * Implementation of hook_form_alter()
+ */
+function sutunam_form_alter(&$form, &$form_state, $form_id) {
+    switch ($form_id) {
+        case 'simplenews_block_form_1'://add your form_id
+            $form['submit']['#ajax'] = array(
+                'callback' => 'simplenews_form_ajax_submit',
+                'wrapper' => 'simplenews-block-form-1',
+                'method' => 'replace',
+                'effect' => 'fade',
+                'progress' => array('type' => 'none'),
+            );
+            $form['submit']['#executes_submit_callback'] = TRUE;
+            unset($form['#submit']);
+            unset($form['#validate']);
+            break;
+        case 'views_exposed_form':
+                if($form_state['view']->name=='job_board'){
+                    $form['field_location_value_i18n']['#attributes']['class'][]='selectpicker';
+                    $form['field_type_value_i18n']['#attributes']['class'][]='selectpicker';
+                }
+            break;
+    }
+}
+
+/*
+function sutunam_mail_alter(&$message){
+    if($message['params']['node']->nid==21){
+        $message['to']='phamxuanthuy@sutunam.com';
+    }
+}
+*/
+
+function simplenews_form_ajax_submit($form, &$form_state) {
+    if (!valid_email_address($form_state['values']['mail'])) {
+        drupal_set_message(t('The e-mail address %mail is not valid.', array('%mail' => $form_state['values']['mail'])), 'error');
+    }
+    else {
+        form_load_include($form_state, 'inc', 'simplenews', 'includes/simplenews.subscription');
+        simplenews_block_form_submit($form, $form_state);
+    }
+    return render($form);
+}
+
+function sutunam_block_view_alter(&$data, $block) {
+    switch ($block->delta) {
+        case 'client-block-20':
+            if(strpos($data['content'],'sub-remember')===false)
+                $data['content'] = '<div class="sub-remember"><span>'.t('Sous 24h').'</span></div>'.$data['content'];
+            break;
+    }
+}
