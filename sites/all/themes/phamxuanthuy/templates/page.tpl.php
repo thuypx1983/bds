@@ -142,37 +142,32 @@
         <?php endif; ?>
 
         <div id="primary">
-            <div class="bg_product_page"></div>
-            <section id="content" role="main">
-
-                <?php if (theme_get_setting('breadcrumbs')): ?>
-                    <?php if ($breadcrumb): ?>
-                        <div id="breadcrumbs">
-                            <div class="container">
-                                <div class="row"><?php print $breadcrumb; ?></div>
-                            </div>
+            <?php if (theme_get_setting('breadcrumbs')): ?>
+                <?php if ($breadcrumb): ?>
+                    <div id="breadcrumbs">
+                        <div class="container">
+                            <div class="row"><?php print $breadcrumb; ?></div>
                         </div>
-                    <?php endif; ?>
+                    </div>
                 <?php endif; ?>
+            <?php endif; ?>
 
-                <?php print $messages; ?>
-                <div id="content-wrap">
-                    <?php print render($title_prefix); ?>
-                    <?php if ($title): ?>
-                        <h1 class="page-title">
-                        <div class="container title">
-                            <div class="row"><?php print phamxuanthuy_title_html($title); ?></div>
-                        </div></h1><?php endif; ?>
-                    <?php print render($title_suffix); ?>
-                    <?php if (!empty($tabs['#primary'])): ?>
-                        <div class="tabs-wrapper clearfix"><?php print render($tabs); ?></div><?php endif; ?>
-                    <?php print render($page['help']); ?>
-                    <?php if ($action_links): ?>
-                        <ul class="action-links"><?php print render($action_links); ?></ul><?php endif; ?>
-                    <?php print render($page['content']); ?>
-                </div>
-            </section>
-
+            <?php print $messages; ?>
+            <div id="content-wrap">
+                <?php print render($title_prefix); ?>
+                <?php if ($title): ?>
+                    <h1 class="page-title">
+                    <div class="container title">
+                        <div class="row"><?php print phamxuanthuy_title_html($title); ?></div>
+                    </div></h1><?php endif; ?>
+                <?php print render($title_suffix); ?>
+                <?php if (!empty($tabs['#primary'])): ?>
+                    <div class="tabs-wrapper clearfix"><?php print render($tabs); ?></div><?php endif; ?>
+                <?php print render($page['help']); ?>
+                <?php if ($action_links): ?>
+                    <ul class="action-links"><?php print render($action_links); ?></ul><?php endif; ?>
+                <?php print render($page['content']); ?>
+            </div>
         </div>
 
 
