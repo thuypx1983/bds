@@ -135,7 +135,11 @@
         <?php print render($page['banner']); ?>
     </div>
     <div id="main-content">
-
+        <?php if ($page['sidebar_left']): ?>
+            <aside id="sidebar_left">
+                <?php print render($page['sidebar_left']); ?>
+            </aside>
+        <?php endif; ?>
 
         <div id="primary">
             <?php if (theme_get_setting('breadcrumbs')): ?>
@@ -147,35 +151,22 @@
                     </div>
                 <?php endif; ?>
             <?php endif; ?>
-            <?php print render($page['help']); ?>
+
             <?php print $messages; ?>
-            <div id="content-wrapper nd-khoi">
-                <div class="container">
-                    <div class="row">
-                        <div id="content" class="col-xs-12 col-sm-12 col-md-9 col-lg-9 pull-right">
-                            <?php print render($title_prefix); ?>
-                            <?php if ($title): ?>
-                                <h1 class="page-title">
-                                <?php print ($title); ?>
-                                </h1><?php endif; ?>
-                            <?php print render($title_suffix); ?>
-                            <?php if (!empty($tabs['#primary'])): ?>
-                                <div class="tabs-wrapper clearfix"><?php print render($tabs); ?></div><?php endif; ?>
-                            <?php if ($action_links): ?>
-                                <ul class="action-links"><?php print render($action_links); ?></ul><?php endif; ?>
-                            <?php print render($page['content']); ?>
-                        </div>
-                        <div id="sidebar" class="hidden-xs hidden-sm col-md-3 col-lg-3 pull-left">
-                            <?php if ($page['sidebar_left']): ?>
-                                <?php print render($page['sidebar_left']); ?>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </div>
-
-
-            </div>
-
+            <div id="content-wrap">
+                <?php print render($title_prefix); ?>
+                <?php if ($title): ?>
+                    <h1 class="page-title">
+                    <div class="container title">
+                        <div class="row"><?php print phamxuanthuy_title_html($title); ?></div>
+                    </div></h1><?php endif; ?>
+                <?php print render($title_suffix); ?>
+                <?php if (!empty($tabs['#primary'])): ?>
+                    <div class="tabs-wrapper clearfix"><?php print render($tabs); ?></div><?php endif; ?>
+                <?php print render($page['help']); ?>
+                <?php if ($action_links): ?>
+                    <ul class="action-links"><?php print render($action_links); ?></ul><?php endif; ?>
+                <?php print render($page['content']); ?>
                 <div id="dang-ky" class="tu-van container nd-khoi">
                     <div class="row">
                         <div class="col-left nd-col col-xs-12 col-sm-7 col-md-7">
@@ -212,6 +203,12 @@
             </div>
         </div>
 
+
+        <?php if ($page['sidebar_right']): ?>
+            <aside id="sidebar_right">
+                <?php print render($page['sidebar_right']); ?>
+            </aside>
+        <?php endif; ?>
     </div>
 
     <footer id="footer">

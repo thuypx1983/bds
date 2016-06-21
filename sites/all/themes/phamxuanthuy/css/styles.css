@@ -512,6 +512,15 @@ body.archive .post-thumb .the-excerpt {
 .khoi-end .title-khoi span {
     display: block;
 }
+.khoi h2 {
+    font-size: 25px;
+    text-align: left;
+    margin-bottom: 38px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #006379;
+    padding-bottom: 5px;
+}
+
 .khoi-end .danh-gia .content .item {
     clear: both;
     font-size: 14px;
@@ -534,13 +543,24 @@ body.archive .post-thumb .the-excerpt {
 .tu-van .col-right {
     padding-left: 20px;
 }
-.tu-van .nd-col .content {
+.tu-van .nd-col .content .content{
     border: 1px solid #006379;
     padding: 30px;
 }
-.tu-van .nd-col .content .title {
+.tu-van .nd-col .content  .content .title {
     font-size: 18px;
     font-weight: 600;
+}
+.tu-van h2 {
+    background-color: #006379;
+    color: #fff;
+    font-size: 18px;
+    height: 46px;
+    line-height: 27px;
+    margin: 0;
+    padding: 10px 0 10px 25px;
+    text-align: left;
+    width: 100%;
 }
 .tu-van .title-khoi {
     background-color: #006379;
@@ -702,13 +722,13 @@ body.single-post .tu-van form input[type="submit"]:hover {
     margin-bottom: 25px;
     margin-right: 20px;
 }
-.videoWrapper {
+#block-block-5 .content{
     height: 0;
     overflow: hidden;
     padding-bottom: 56.25%;
     position: relative;
 }
-.videoWrapper iframe {
+#block-block-5 .content iframe {
     height: 100%;
     left: 0;
     position: absolute;
@@ -885,4 +905,111 @@ body.single-post .tu-van form input[type="submit"]:hover {
         display: block;
         float: none;
     }
+}
+
+#block-views-customer-reviews-block .views-field-field-image{
+    float: left;
+    padding-right: 15px;
+}
+
+#block-webform-client-block-17{
+    border: 1px solid #006379;
+}
+#block-webform-client-block-17 .content{
+    padding: 30px;
+}
+
+#block-views-buidling-feature-block .views-field-title a {
+    display: block;
+    background-color: #006379;
+    color: #fff;
+    margin: 0;
+    padding: 8px 0;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 15px;
+    font-weight: 400;
+}
+#block-views-buidling-feature-block-1 img,#block-views-buidling-feature-block img {
+    height: auto;
+    width: 100%;
+}
+#block-views-buidling-feature-block-1 .views-field-title a{
+    display: block;
+    margin-bottom: 0;
+    margin-top: 15px;
+    text-align: center;
+    text-transform: uppercase;
+    color: #252525;
+    transition: all 0.4s ease 0s;
+    text-align: center;
+    display: block;
+
+}
+#block-views-buidling-feature-block{
+    text-align: center;
+}
+#block-views-buidling-feature-block h2{
+    margin-top: 15px;
+    text-align: center;
+    text-transform: uppercase;
+    border-bottom: 1px solid #006379;
+    display: inline-block;
+    font-size: 28px;
+    margin-bottom: 38px;
+    text-align: center;
+    text-transform: uppercase;
+    padding-bottom: 5px;
+    text-align: center;
+}
+
+#block-quicktabs-home-tab >h2 {
+    color: #02596c;
+    font-family: "Open Sans";
+    font-weight: 700;
+    margin-bottom: 6px;
+    text-align: center;
+    font-size: 30px;
+    text-transform: uppercase;
+}
+#quicktabs-home_tab ul.quicktabs-tabs.quicktabs-style-mac ul{
+    text-align: center;
+    width: 100%;
+}
+#quicktabs-home_tab ul.quicktabs-tabs.quicktabs-style-mac li{
+    background-image: none;
+    display: inline-block;
+    float: none;
+    margin: 0px;
+    padding: 0px;
+}
+#quicktabs-home_tab ul{
+    text-align: center;
+}
+#quicktabs-home_tab ul.quicktabs-tabs.quicktabs-style-mac li a{
+    background-color: #dfdfdf;
+    border: 0 none;
+    border-radius: 0;
+    color: #2c2c2c;
+    line-height: 1.42857;
+    margin-right: 15px;
+    padding: 9px 30px;
+    background-image: none;
+}
+#quicktabs-home_tab ul.quicktabs-tabs.quicktabs-style-mac li.active > a, #quicktabs-home_tab ul.quicktabs-tabs.quicktabs-style-mac li a:hover, #quicktabs-home_tab ul.quicktabs-tabs.quicktabs-style-mac li a:focus {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #00637a;
+    border-color: -moz-use-text-color -moz-use-text-color transparent;
+    border-image: none;
+    border-style: none;
+    border-width: 0;
+    color: #fff;
+    cursor: default;
+    cursor: pointer;
+}
+#block-quicktabs-home-tab{
+    text-align: center;
 }
