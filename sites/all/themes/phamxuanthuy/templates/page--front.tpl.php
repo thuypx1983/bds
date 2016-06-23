@@ -67,21 +67,17 @@
 <div id="wrapper">
     <header id="header">
         <div class="header-top">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-7 col-lg-8">
-                        <div class="header-top-left">
-                            <?php if (theme_get_setting('image_logo', 'phamxuanthuy')): ?>
+            <div class="container">
+                <div class="row">           
+                     <?php if (theme_get_setting('image_logo', 'phamxuanthuy')): ?>
                                 <?php if ($logo): ?>
-                                    <div class="site-logo">
-                                        <div id="site-logo">
+                                                                           <div id="logo">
                                             <h1>
                                                 <a href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>">
                                                     <img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>"/>
                                                 </a>
                                             </h1>
                                         </div>
-                                    </div>
                                 <?php endif; ?>
                             <?php else: ?>
                                 <hgroup id="site-name-wrap">
@@ -94,11 +90,9 @@
                                         id="site-slogan"><?php print $site_slogan; ?></h2><?php endif; ?>
                                 </hgroup>
                             <?php endif; ?>
-                        </div>
-                    </div>
-                    <div class="col-md-5 col-lg-4">
-                        <?php print render($page['header_top_right']); ?>
-                    </div>
+                <div class="banner-header">
+                           <?php print render($page['header_top_right']); ?>
+                </div>    
                 </div>
             </div>
         </div>

@@ -6,8 +6,9 @@ engine = phptemplate
 stylesheets[all][] = css/bootstrap/css/bootstrap.css
 stylesheets[all][] = css/styles.css
 
-scripts[] = css/bootstrap/js/bootstrap.min.js
-scripts[] = js/scripts.js
+scripts[] = css/bootstrap/js/bootstrap.min.js  
+scripts[] = js/smooth-scroll.js  
+scripts[] = js/scripts.js         
 
 regions[header_top_left]         = Header top left
 regions[header_top_right]         = Header top right

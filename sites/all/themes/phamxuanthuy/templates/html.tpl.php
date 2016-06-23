@@ -12,5 +12,8 @@
   <?php print $page_top; ?>
   <?php print $page; ?>
   <?php print $page_bottom; ?>
+  <a class="scrollToTop" style="display: inline;" data-scroll data-options='{ "easing": "easeOutCubic" }' data-scroll="" href="#">
+        <img alt="" src="<?php echo file_create_url(drupal_get_path('theme', 'phamxuanthuy').'/images/back-to-top.png');?>">
+    </a>
 </body>
 </html>
